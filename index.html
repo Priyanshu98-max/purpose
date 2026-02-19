@@ -5,6 +5,103 @@
   <title>saro-rosy ❤️</title>
   <link rel='stylesheet' href='https://fonts.googleapis.com/css2?family=Short+Stack&amp;family=Homemade+Apple&amp;display=swap'>
   <link rel="stylesheet" href="style.css">
+  <style>
+    /* Red glowing border on entire page */
+    body {
+      border: 3px solid #ff0000;
+      box-shadow: inset 0 0 20px rgba(255, 0, 0, 0.8), 0 0 30px rgba(255, 0, 0, 0.6);
+    }
+
+    /* Popup/modal styles */
+    #openPopup {
+      position: fixed;
+      right: 20px;
+      bottom: 20px;
+      background: #d000ffdb;
+      color: white;
+      border: none;
+      padding: 10px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+      font-family: inherit;
+    }
+
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.4);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+    }
+
+    .modal-overlay.show {
+      display: flex;
+    }
+
+    .modal {
+      background: #ffc0cb; /* pink background */
+      padding: 24px;
+      border-radius: 12px;
+      max-width: 480px;
+      width: calc(100% - 40px);
+      box-shadow: 0 10px 40px rgba(0,0,0,0.25);
+      text-align: center;
+      position: relative;
+      font-family: inherit;
+    }
+
+    .modal h2 { margin: 0 0 8px; }
+    .modal p { margin: 0 0 1px; }
+
+    .modal .close {
+      position: absolute;
+      top: 8px;
+      right: 10px;
+      background: transparent;
+      border: none;
+      font-size: 20px;
+      cursor: pointer;
+    }
+    /* Full-page heart overlay with multiple shapes */
+    #heartEffect {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+      z-index: 9998;
+      opacity: 0;
+      transition: opacity 0.35s ease;
+    }
+    #heartEffect.show { opacity: 1; }
+
+    .hearts { position: absolute; inset: 0; }
+
+    .heart-shape {
+      position: absolute;
+      transform-origin: center;
+      opacity: 0;
+      filter: drop-shadow(0 10px 30px rgba(0,0,0,0.18));
+      animation: heartPop 900ms cubic-bezier(.2,.9,.3,1) forwards;
+    }
+
+    @keyframes heartPop {
+      0% { opacity: 0; transform: translate(-50%, -50%) scale(0.6) rotate(0deg); }
+      40% { opacity: 0.95; transform: translate(-50%, -50%) scale(1.08) rotate(6deg); }
+      100% { opacity: 0.36; transform: translate(-50%, -50%) scale(1) rotate(0deg); }
+    }
+
+    /* Staggered variations */
+    .h1 { left: 50%; top: 45%; width: 36vmin; height: 36vmin; animation-delay: 0ms; }
+    .h2 { left: 30%; top: 40%; width: 22vmin; height: 22vmin; animation-delay: 120ms; transform: rotate(-10deg); }
+    .h3 { left: 70%; top: 50%; width: 26vmin; height: 26vmin; animation-delay: 220ms; transform: rotate(8deg); }
+    .h4 { left: 20%; top: 65%; width: 18vmin; height: 18vmin; animation-delay: 340ms; }
+    .h5 { left: 80%; top: 28%; width: 20vmin; height: 20vmin; animation-delay: 420ms; }
+  </style>
 </head>
 <body>
 
@@ -14,7 +111,7 @@
 <div class="paper image">
   <p> and I fallen in</p>
     <p>Love with You 😍 </p>
-   <img src="girl.jpg" />
+   
 
 </div>
 <div class="paper image">
@@ -37,7 +134,79 @@
 <div class="paper">
 <p class="p1">Drag the papers to move!</p>
 </div>
+<button id="openPopup" aria-haspopup="dialog">❤️✌️CLICK HERE</button>
+
+<!-- Popup modal -->
+<div id="modalOverlay" class="modal-overlay" role="dialog" aria-modal="true" aria-hidden="true">
+  <div class="modal">
+    <button class="close" id="closePopup" aria-label="Close">×</button>
+    <h2>Hi there!</h2>
+  <div class="tenor-gif-embed" data-postid="11951420229067864601" data-share-method="host" data-aspect-ratio="0.911647" data-width="100%"><a href="https://tenor.com/view/cute-gif-11951420229067864601"></a>from <a href="https://tenor.com/search/cute-stickers">Cute Stickers</a></div> <script type="text/javascript" async src="https://tenor.com/embed.js"></script>
+    <p></p>
+    <p style="margin-top:8px;"><button id="closeAction" style="background:#cf3f85;color:#e4e4e4;border:none;padding:8px 12px;border-radius:6px;cursor:pointer;">Close</button></p>
+  </div>
+</div>
 <!-- javascript file -->
   <script  src="script.js"></script>
+  <script>
+    (function(){
+      const openBtn = document.getElementById('openPopup');
+      const overlay = document.getElementById('modalOverlay');
+      const closeBtn = document.getElementById('closePopup');
+      const closeAction = document.getElementById('closeAction');
+
+      function show() {
+        overlay.classList.add('show');
+        overlay.setAttribute('aria-hidden','false');
+      }
+      function hide() {
+        overlay.classList.remove('show');
+        overlay.setAttribute('aria-hidden','true');
+      }
+
+      if (openBtn) openBtn.addEventListener('click', show);
+      if (closeBtn) closeBtn.addEventListener('click', hide);
+      if (closeAction) closeAction.addEventListener('click', hide);
+      if (overlay) overlay.addEventListener('click', function(e){ if(e.target===overlay) hide(); });
+
+      document.addEventListener('keydown', function(e){ if(e.key==='Escape') hide(); });
+    })();
+  </script>
+  <script>
+    // Show multiple animated hearts on page load
+    window.addEventListener('load', function(){
+      try {
+        var heartEffect = document.createElement('div');
+        heartEffect.id = 'heartEffect';
+        
+        var heartsContainer = document.createElement('div');
+        heartsContainer.className = 'hearts';
+        
+        var heartSVG = '<svg viewBox="0 0 24 24" aria-hidden="true" style="width:100%;height:100%;"><path fill="rgba(255,0,64,0.95)" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 6 3.99 4 6.5 4c1.74 0 3.41.81 4.5 2.09C12.09 4.81 13.76 4 15.5 4 18.01 4 20 6 20 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>';
+        
+        // Create 5 heart shapes with different sizes and positions
+        for(let i = 1; i <= 5; i++) {
+          var heart = document.createElement('div');
+          heart.className = 'heart-shape h' + i;
+          heart.innerHTML = heartSVG;
+          heartsContainer.appendChild(heart);
+        }
+        
+        heartEffect.appendChild(heartsContainer);
+        document.body.appendChild(heartEffect);
+        
+        // trigger appearance
+        requestAnimationFrame(function(){
+          setTimeout(function(){ heartEffect.classList.add('show'); }, 20);
+        });
+        
+        // remove after 5 seconds
+        setTimeout(function(){
+          heartEffect.classList.remove('show');
+          setTimeout(function(){ if(heartEffect && heartEffect.parentNode) heartEffect.parentNode.removeChild(heartEffect); }, 500);
+        }, 2000);
+      } catch (e) { /* silent fail */ }
+    });
+  </script>
 </body>
 </html>
